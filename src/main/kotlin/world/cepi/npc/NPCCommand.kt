@@ -22,7 +22,7 @@ object NPCCommand : Command("npc") {
         val newID = ArgumentType.Word("newID").map {
             if (NPCManager.contains(it))
                 throw ArgumentSyntaxException("This ID already exists!", it, 1)
-            
+
             it
         }
 
