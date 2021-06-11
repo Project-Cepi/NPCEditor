@@ -4,6 +4,8 @@ import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException
 import net.minestom.server.command.builder.suggestion.SuggestionEntry
+import net.minestom.server.entity.Player
+import world.cepi.kstom.command.addSyntax
 import world.cepi.kstom.command.arguments.literal
 import world.cepi.kstom.command.arguments.suggest
 
@@ -33,6 +35,13 @@ object NPCCommand : Command("npc") {
             it
         }.suggest { _, _ ->
             NPCManager.names.map { SuggestionEntry(it) }.toMutableList()
+        }
+
+        addSyntax(create, newID) { sender, args ->
+
+            val player = sender as Player
+
+            NPCManager.add(NPC(args.get(newID), player.instance!!, player.position))
         }
 
     }

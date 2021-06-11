@@ -6,7 +6,15 @@ object NPCManager {
 
     val names = internalNPCMap.keys
 
-    fun contains(name: String) = internalNPCMap.contains(name)
+    fun contains(id: String) = internalNPCMap.contains(id)
+
+    fun add(npc: NPC) {
+        if (contains(npc.id)) return
+
+        internalNPCMap[npc.id] = npc
+    }
+
+    fun remove(id: String): Unit = run { internalNPCMap.remove(id) }
 
 
 }
