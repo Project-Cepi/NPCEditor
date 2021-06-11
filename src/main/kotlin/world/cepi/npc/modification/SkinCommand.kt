@@ -32,6 +32,10 @@ object SkinCommand : Command("skin") {
         addSyntax(selector, user) { sender, args ->
             val player = sender as Player
 
+            val users = args[user].find(player)
+
+            if (users.isEmpty()) return@addSyntax
+
             player.skin = PlayerSkin.fromUuid(
                 args[user].find(player)[0].uuid.toString()
             )
