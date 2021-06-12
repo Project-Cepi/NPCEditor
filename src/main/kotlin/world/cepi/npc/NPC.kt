@@ -1,5 +1,7 @@
 package world.cepi.npc
 
+import kotlinx.serialization.Transient
+import net.minestom.server.entity.PlayerSkin
 import net.minestom.server.entity.fakeplayer.FakePlayer
 import net.minestom.server.instance.Instance
 import net.minestom.server.utils.Position
@@ -10,11 +12,19 @@ class NPC(
     val instance: Instance,
     vararg positions: Position,
     val name: String = id,
-    val uuid: UUID = UUID.randomUUID()
+    val uuid: UUID = UUID.randomUUID(),
+    skin: PlayerSkin = PlayerSkin.fromUsername("MHF_Apple")!!
 ) {
+
+    var skin: PlayerSkin = skin
+        set(value) {
+            instances.forEach { it.skin = value }
+            field = value
+        }
 
     val positions: MutableList<Position> = positions.toMutableList()
 
+    @Transient
     private val instances = mutableListOf<FakePlayer>()
 
     fun generateInstanceFromNPC(
@@ -27,6 +37,7 @@ class NPC(
         ) {
             it.setInstance(instance, position)
             instances.add(it)
+            it.skin = skin
         }
     }
 

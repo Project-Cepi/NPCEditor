@@ -14,6 +14,7 @@ object SkinCommand : Command("skin") {
 
     init {
         val uuidLiteral = "uuid".literal()
+        val usernameLiteral = "username".literal()
         val selector = "selector".literal()
         val reset = "reset".literal()
 
@@ -21,11 +22,19 @@ object SkinCommand : Command("skin") {
             .onlyPlayers(true)
             .singleEntity(true)
 
-        val uuid = ArgumentType.Word("uuid").map {
+        val uuid = ArgumentType.Word("uuidInput").map {
             try {
                 UUID.fromString(it)
             } catch (e: Exception) {
                 throw ArgumentSyntaxException("Invalid uuid", it, 1)
+            }
+        }
+
+        val username = ArgumentType.Word("usernameInput").map {
+            try {
+                PlayerSkin.fromUsername(it) ?: throw ArgumentSyntaxException("Skin not found", it, 1)
+            } catch (e: Exception) {
+                throw ArgumentSyntaxException("Skin not found", it, 1)
             }
         }
 
@@ -47,6 +56,12 @@ object SkinCommand : Command("skin") {
             player.skin = PlayerSkin.fromUuid(
                 args[uuid].toString()
             )
+        }
+
+        addSyntax(usernameLiteral, username) { sender, args ->
+            val player = sender as Player
+
+            player.skin = args[username]
         }
 
         addSyntax(reset) { sender ->
