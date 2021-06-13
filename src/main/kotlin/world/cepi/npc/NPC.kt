@@ -3,6 +3,7 @@ package world.cepi.npc
 import kotlinx.serialization.Transient
 import net.minestom.server.entity.PlayerSkin
 import net.minestom.server.entity.fakeplayer.FakePlayer
+import net.minestom.server.entity.fakeplayer.FakePlayerOption
 import net.minestom.server.instance.Instance
 import net.minestom.server.utils.Position
 import java.util.*
@@ -18,8 +19,8 @@ class NPC(
 
     var skin: PlayerSkin = skin
         set(value) {
-            instances.forEach { it.skin = value }
             field = value
+            instances.forEach { it.skin = value }
         }
 
     val positions: MutableList<Position> = positions.toMutableList()

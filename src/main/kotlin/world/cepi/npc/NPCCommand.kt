@@ -8,6 +8,7 @@ import net.minestom.server.entity.Player
 import world.cepi.kstom.command.addSyntax
 import world.cepi.kstom.command.arguments.literal
 import world.cepi.kstom.command.arguments.suggest
+import world.cepi.npc.modification.SkinArguments
 
 object NPCCommand : Command("npc") {
 
@@ -20,6 +21,7 @@ object NPCCommand : Command("npc") {
         val remove = "remove".literal()
         val summon = "summon".literal()
         val instances = "instances".literal()
+        val skin = "skin".literal()
 
         val newID = ArgumentType.Word("newID").map {
             if (NPCManager.contains(it))
@@ -32,7 +34,7 @@ object NPCCommand : Command("npc") {
             if (!NPCManager.contains(it))
                 throw ArgumentSyntaxException("This ID does not exist!", it, 1)
 
-            it
+            NPCManager[it]!!
         }.suggest { _, _ ->
             NPCManager.names.map { SuggestionEntry(it) }.toMutableList()
         }
@@ -42,6 +44,10 @@ object NPCCommand : Command("npc") {
             val player = sender as Player
 
             NPCManager.add(NPC(args.get(newID), player.instance!!, player.position))
+        }
+
+        addSyntax(skin, existingID, SkinArguments.usernameLiteral, SkinArguments.username) { sender, args ->
+            args[existingID].skin = args[SkinArguments.username]
         }
 
     }
