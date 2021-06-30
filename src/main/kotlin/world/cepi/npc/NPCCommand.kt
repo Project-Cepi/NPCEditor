@@ -35,19 +35,19 @@ object NPCCommand : Command("npc") {
                 throw ArgumentSyntaxException("This ID does not exist!", it, 1)
 
             NPCManager[it]!!
-        }.suggest { _, _ ->
-            NPCManager.names.map { SuggestionEntry(it) }.toMutableList()
+        }.suggest {
+            NPCManager.names.toList()
         }
 
-        addSyntax(create, newID) { sender, args ->
+        addSyntax(create, newID) {
 
             val player = sender as Player
 
-            NPCManager.add(NPC(args.get(newID), player.instance!!, player.position))
+            NPCManager.add(NPC(context.get(newID), player.instance!!, player.position))
         }
 
-        addSyntax(skin, existingID, SkinArguments.usernameLiteral, SkinArguments.username) { sender, args ->
-            args[existingID].skin = args[SkinArguments.username]
+        addSyntax(skin, existingID, SkinArguments.usernameLiteral, SkinArguments.username) {
+            context[existingID].skin = context[SkinArguments.username]
         }
 
     }

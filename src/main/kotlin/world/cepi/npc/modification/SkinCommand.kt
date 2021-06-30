@@ -10,33 +10,33 @@ object SkinCommand : Command("skin") {
 
     init {
 
-        addSyntax(SkinArguments.selector, SkinArguments.userSkinInput) { sender, args ->
+        addSyntax(SkinArguments.selector, SkinArguments.userSkinInput) {
             val player = sender as Player
 
-            val users = args[SkinArguments.userSkinInput].find(player)
+            val users = context[SkinArguments.userSkinInput].find(player)
 
             if (users.isEmpty()) return@addSyntax
 
             player.skin = PlayerSkin.fromUuid(
-                args[SkinArguments.userSkinInput].find(player)[0].uuid.toString()
+                context[SkinArguments.userSkinInput].find(player)[0].uuid.toString()
             )
         }
 
-        addSyntax(SkinArguments.uuidLiteral, SkinArguments.uuid) { sender, args ->
+        addSyntax(SkinArguments.uuidLiteral, SkinArguments.uuid) {
             val player = sender as Player
 
             player.skin = PlayerSkin.fromUuid(
-                args[SkinArguments.uuid].toString()
+                context[SkinArguments.uuid].toString()
             )
         }
 
-        addSyntax(SkinArguments.usernameLiteral, SkinArguments.username) { sender, args ->
+        addSyntax(SkinArguments.usernameLiteral, SkinArguments.username) {
             val player = sender as Player
 
-            player.skin = args[SkinArguments.username]
+            player.skin = context[SkinArguments.username]
         }
 
-        addSyntax(SkinArguments.reset) { sender ->
+        addSyntax(SkinArguments.reset) {
             val player = sender as Player
 
             player.skin = PlayerSkin.fromUsername(player.username)
