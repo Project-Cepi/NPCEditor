@@ -8,6 +8,7 @@ import net.minestom.server.entity.Player
 import world.cepi.kstom.command.addSyntax
 import world.cepi.kstom.command.arguments.literal
 import world.cepi.kstom.command.arguments.suggest
+import world.cepi.mob.mob.mobEgg
 import world.cepi.npc.modification.SkinArguments
 
 object NPCCommand : Command("npc") {
@@ -21,7 +22,6 @@ object NPCCommand : Command("npc") {
         val remove = "remove".literal()
         val summon = "summon".literal()
         val instances = "instances".literal()
-        val skin = "skin".literal()
 
         val newID = ArgumentType.Word("newID").map {
             if (NPCManager.contains(it))
@@ -43,11 +43,14 @@ object NPCCommand : Command("npc") {
 
             val player = sender as Player
 
-            NPCManager.add(NPC(context.get(newID), player.instance!!, player.position))
-        }
+            val mob = player.mobEgg ?: return@addSyntax
 
-        addSyntax(skin, existingID, SkinArguments.usernameLiteral, SkinArguments.username) {
-            context[existingID].skin = context[SkinArguments.username]
+            NPCManager.add(NPC(
+                context.get(newID),
+                respawnPositions = mutableListOf(player.position),
+                mob = mob,
+                instance = player.instance!!
+            ))
         }
 
     }
