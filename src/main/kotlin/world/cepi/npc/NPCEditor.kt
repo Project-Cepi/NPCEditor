@@ -14,6 +14,8 @@ class NPCEditor : Extension() {
         SkinCommand.register()
         DialogueCommand.register()
 
+        eventNode.addChild(NPC.npcNode)
+
         logger.info("[NPCEditor] has been enabled!")
     }
 

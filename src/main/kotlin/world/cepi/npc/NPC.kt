@@ -5,6 +5,7 @@ import net.minestom.server.event.EventNode
 import net.minestom.server.event.entity.EntityDeathEvent
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent
 import net.minestom.server.instance.Instance
+import net.minestom.server.tag.Tag
 import net.minestom.server.utils.Position
 import net.minestom.server.utils.time.TimeUnit
 import world.cepi.kstom.Manager
@@ -21,22 +22,25 @@ class NPC(
     val mob: Mob
 ) {
 
-    var uuid: UUID? = null
+    companion object {
+        val npcNode = EventNode.type("npc", EventFilter.ENTITY)
+    }
 
-    val listenerNode = EventNode.type("mob-$id", EventFilter.ENTITY) { event, entity ->
-        entity.uuid == uuid
+    val listenerNode = EventNode.type("npc-$id", EventFilter.ENTITY) { event, entity ->
+        entity.getTag(Tag.String("npcID")) == id
     }
 
     init {
+
+        npcNode.addChild(listenerNode)
+
         listenerNode.listenOnly<EntityDeathEvent> {
             isAlive = false
-            uuid = null
             onDeath()
         }
 
         listenerNode.listenOnly<RemoveEntityFromInstanceEvent> {
             isAlive = false
-            uuid = null
             onDeath()
         }
     }
@@ -51,8 +55,9 @@ class NPC(
 
         creature.setInstance(instance, respawnPositions.random())
 
+        creature.setTag(Tag.String("npcID"), id)
+
         isAlive = true
-        uuid = creature.uuid
     }
 
     fun onDeath() {
