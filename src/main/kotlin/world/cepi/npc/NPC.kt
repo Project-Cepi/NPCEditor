@@ -3,6 +3,7 @@ package world.cepi.npc
 import net.minestom.server.event.EventFilter
 import net.minestom.server.event.EventNode
 import net.minestom.server.event.entity.EntityDeathEvent
+import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent
 import net.minestom.server.instance.Instance
 import net.minestom.server.utils.Position
 import net.minestom.server.utils.time.TimeUnit
@@ -28,6 +29,12 @@ class NPC(
 
     init {
         listenerNode.listenOnly<EntityDeathEvent> {
+            isAlive = false
+            uuid = null
+            onDeath()
+        }
+
+        listenerNode.listenOnly<RemoveEntityFromInstanceEvent> {
             isAlive = false
             uuid = null
             onDeath()

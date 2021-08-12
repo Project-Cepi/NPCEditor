@@ -50,7 +50,7 @@ object NPCCommand : Command("npc") {
                 respawnPositions = mutableListOf(player.position),
                 mob = mob,
                 instance = player.instance!!
-            ))
+            ).also { it.attemptSpawn() })
         }
 
     }
