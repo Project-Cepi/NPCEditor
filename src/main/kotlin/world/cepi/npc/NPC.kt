@@ -1,12 +1,12 @@
 package world.cepi.npc
 
+import net.minestom.server.coordinate.Pos
 import net.minestom.server.event.EventFilter
 import net.minestom.server.event.EventNode
 import net.minestom.server.event.entity.EntityDeathEvent
 import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent
 import net.minestom.server.instance.Instance
 import net.minestom.server.tag.Tag
-import net.minestom.server.utils.Position
 import net.minestom.server.utils.time.TimeUnit
 import world.cepi.kstom.Manager
 import world.cepi.kstom.event.listenOnly
@@ -17,7 +17,7 @@ import java.util.*
 class NPC(
     val id: String,
     var respawnInterval: Duration = Duration.of(5, TimeUnit.SECOND),
-    val respawnPositions: MutableList<Position>,
+    val respawnPositions: MutableList<Pos>,
     val instance: Instance,
     val mob: Mob
 ) {
@@ -58,6 +58,10 @@ class NPC(
         creature.setTag(Tag.String("npcID"), id)
 
         isAlive = true
+    }
+
+    fun remove() {
+        // TODO
     }
 
     fun onDeath() {

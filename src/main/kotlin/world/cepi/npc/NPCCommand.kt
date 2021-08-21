@@ -53,6 +53,10 @@ object NPCCommand : Command("npc") {
             ).also { it.attemptSpawn() })
         }
 
+        addSyntax(delete, existingID) {
+            NPCManager.remove(existingID.id)
+        }
+
     }
 
 }
