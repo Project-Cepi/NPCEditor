@@ -1,16 +1,33 @@
 package world.cepi.npc
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Transient
+import net.minestom.server.coordinate.Pos
+import net.minestom.server.entity.EntityCreature
 import net.minestom.server.entity.PlayerSkin
 import net.minestom.server.entity.fakeplayer.FakePlayer
 import net.minestom.server.entity.fakeplayer.FakePlayerOption
+import net.minestom.server.event.EventFilter
+import net.minestom.server.event.EventNode
+import net.minestom.server.event.entity.EntityDeathEvent
+import net.minestom.server.event.instance.RemoveEntityFromInstanceEvent
 import net.minestom.server.instance.Instance
-import net.minestom.server.utils.Position
+import net.minestom.server.tag.Tag
+import world.cepi.kstom.event.listenOnly
+import world.cepi.mob.mob.Mob
+import world.cepi.npc.properties.RespawnPositionProperty
+import world.cepi.npc.properties.RespawnTimeProperty
+import java.time.Duration
 import java.util.*
 
 class NPC(
     val id: String,
     val instance: Instance,
+    respawnPositions: MutableList<Pos>,
+    duration: Duration = Duration.ZERO,
     val mob: Mob
 ) {
 
@@ -21,103 +38,35 @@ class NPC(
     val listenerNode = EventNode.type("npc-$id", EventFilter.ENTITY) { event, entity ->
         entity.getTag(Tag.String("npcID")) == id
     }
+    val propertyScope = CoroutineScope(Dispatchers.IO)
+    val properties = listOf(
+        RespawnPositionProperty(propertyScope, this, respawnPositions),
+        RespawnTimeProperty(propertyScope, this, duration)
+    )
+    var currentEntity: EntityCreature? = null
 
     init {
 
         npcNode.addChild(listenerNode)
 
         listenerNode.listenOnly<EntityDeathEvent> {
-            isAlive = false
-            onDeath()
+            isAlive.value = false
         }
 
         listenerNode.listenOnly<RemoveEntityFromInstanceEvent> {
-            isAlive = false
-            onDeath()
+            isAlive.value = false
         }
     }
 
-    var isAlive = false
+    var isAlive = MutableStateFlow(false)
 
     fun attemptSpawn() {
-
-        if (isAlive) return
-
-        val creature = mob.generateMob() ?: return
-
-        creature.setInstance(instance, respawnPositions.random())
-
-        creature.setTag(Tag.String("npcID"), id)
-
-        isAlive = true
+        if (isAlive.value) return
+        isAlive.value = true
     }
 
     fun remove() {
-        // TODO
-    }
-
-    fun onDeath() {
-        Manager.scheduler.buildTask {
-            attemptSpawn()
-        }.delay(respawnInterval.toMillis(), TimeUnit.MILLISECOND).schedule()
-    }
-
-    sealed class NPCProperty {
-        abstract fun parse(sender: CommandSender, value: String)
-    }
-    inner class SpawnPosition : NPCProperty() {
-        var position: Position? = null
-        override fun parse(sender: CommandSender, value: String) {
-            position = ArgumentRelativeBlockPosition("")
-                .parse(value) // abusing empty argument
-                .from(sender.asPlayer())
-                .toPosition()
-            // creating an issue about extracting Parser from the Argument
-            // and enforcing Argument to use the Parser would be helpful
-        }
-    }
-
-    inner class RespawnDelay : NPCProperty() {
-        var duration: Duration? = null
-        override fun parse(sender: CommandSender, value: String) {
-            duration = ArgumentTime("").parse(value).asDuration()
-        }
-        private fun UpdateOption.asDuration(): Duration = Duration.ofMillis(timeUnit.toMilliseconds(value))
-    }
-    inner class NPCInstance(
-        val name: String,
-        val uuid: UUID,
-        val instance: Instance,
-        val skin: PlayerSkin,
-        val position: Position,
-    ) {
-        lateinit var fakePlayer: FakePlayer
-        init {
-            createFakePlayer(position)
-        }
-        val respawnDelay get() = (properties["respawnDelay"] as RespawnDelay).duration
-        val spawnPosition get() = (properties["spawnPosition"] as SpawnPosition).position
-
-        private fun createFakePlayer(position: Position) {
-            FakePlayer.initPlayer(
-                uuid,
-                name
-            ) {
-                it.setInstance(instance, position)
-                it.skin = skin
-                fakePlayer = it
-                respawnDelay?.run {
-                    instance.addEventCallback(EntityDeathEvent::class.java) {
-                        Manager.scheduler.timerExecutionService.schedule(
-                            {
-                                createFakePlayer(spawnPosition ?: this@NPCInstance.position)
-                            },
-                            toMillis(),
-                            TimeUnit.MILLISECONDS
-                        )
-                    }
-                }
-            }
-        }
+        propertyScope.cancel()
+        currentEntity?.remove()
     }
 }

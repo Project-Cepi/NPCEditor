@@ -8,6 +8,7 @@ import net.minestom.server.entity.Player
 import world.cepi.kstom.command.addSyntax
 import world.cepi.kstom.command.arguments.literal
 import world.cepi.kstom.command.arguments.suggest
+import world.cepi.mob.mob.mobEgg
 import world.cepi.npc.modification.SkinArguments
 
 object NPCCommand : Command("npc") {
@@ -47,7 +48,7 @@ object NPCCommand : Command("npc") {
 
         val propertyName = ArgumentType.Word("name")
             .suggest {
-                context[existingID].properties.keys.toList()
+                context[existingID].properties.map { it.name }
             }
 
         val remainingString = ArgumentType.StringArray("value")
@@ -69,19 +70,19 @@ object NPCCommand : Command("npc") {
         addSyntax(delete, existingID) {
             NPCManager.remove(existingID.id)
         }
-
         addSyntax(property, existingID, propertyCommand, propertyName, remainingString) {
             val properties = context[existingID].properties
             val name = context[propertyName]
             val value = context[remainingString].joinToString(" ")
             when (context[propertyCommand]!!) {
                 "get" -> sender.sendMessage(
-                    properties[name]
+                    properties.firstOrNull { it.name == name }
                         ?.let { "Property $name is set to $it" }
                         ?: "Property $name is not set to anything"
                 )
                 "set" -> {
-                    properties[name]?.parse(sender, value)
+                    properties.firstOrNull { it.name == name }
+                        ?.set(sender, value)
                         ?: sender.sendMessage("Property $name is not found")
                 }
             }
