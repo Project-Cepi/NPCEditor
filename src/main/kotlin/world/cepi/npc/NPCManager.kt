@@ -16,7 +16,9 @@ object NPCManager {
 
     operator fun get(id: String) = internalNPCMap[id]
 
-    fun remove(id: String): Unit = run { internalNPCMap.remove(id) }
+    fun remove(id: String) {
+        internalNPCMap.remove(id)
+    }
 
 
 }

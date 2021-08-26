@@ -3,6 +3,7 @@ package world.cepi.npc
 import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException
+import net.minestom.server.command.builder.suggestion.SuggestionEntry
 import net.minestom.server.entity.Player
 import world.cepi.kstom.command.addSyntax
 import world.cepi.kstom.command.arguments.literal
@@ -20,7 +21,6 @@ object NPCCommand : Command("npc") {
         val remove = "remove".literal()
         val summon = "summon".literal()
         val instances = "instances".literal()
-        val skin = "skin".literal()
         val property = "property".literal()
 
 
@@ -56,11 +56,18 @@ object NPCCommand : Command("npc") {
 
             val player = sender as Player
 
-            NPCManager.add(NPC(context.get(newID), player.instance!!, player.position))
+            val mob = player.mobEgg ?: return@addSyntax
+
+            NPCManager.add(NPC(
+                context.get(newID),
+                respawnPositions = mutableListOf(player.position),
+                mob = mob,
+                instance = player.instance!!
+            ).also { it.attemptSpawn() })
         }
 
-        addSyntax(skin, existingID, SkinArguments.usernameLiteral, SkinArguments.username) {
-            context[existingID].skin = context[SkinArguments.username]
+        addSyntax(delete, existingID) {
+            NPCManager.remove(existingID.id)
         }
 
         addSyntax(property, existingID, propertyCommand, propertyName, remainingString) {

@@ -3,6 +3,11 @@
   "name": "${project.name}",
   "version": "${project.version}",
   "dependencies": [
-    "KStom"
-  ]
+    "KStom",
+    "MobExtension",
+    "Kepi"
+  ],
+  "meta": {
+    "downloadURL": "https://github.com/Project-Cepi/NPCEditor/releases/download/latest/NPCEditor-1.0.0-all.jar"
+  }
 }

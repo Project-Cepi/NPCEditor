@@ -3,7 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.5.20"
+    id("org.jetbrains.kotlin.jvm") version "1.5.30"
     // Kotlinx serialization for any data format
     kotlin("plugin.serialization") version "1.4.21"
     // Shade the plugin
@@ -38,13 +38,16 @@ dependencies {
     compileOnly(kotlin("reflect"))
 
     // Compile Minestom into project
-    compileOnly("com.github.Minestom:Minestom:d871cb2c9c")
+    compileOnly("com.github.Minestom:Minestom:fa07d861a6")
 
     // Get KStom
-    compileOnly("com.github.Project-Cepi:KStom:0527eabb7f")
+    compileOnly("com.github.Project-Cepi:KStom:688d2abc0b")
 
     // import kotlinx serialization
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
+
+    // add mobextension
+    compileOnly("com.github.Project-Cepi:MobExtension:629803c1cd")
 }
 tasks.withType<Test> {
     useJUnitPlatform()
@@ -66,7 +69,7 @@ tasks {
     }
 
     // Set name, minimize, and merge service files
-    named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+    named<ShadowJar>("shadowJar") {
         archiveBaseName.set(project.name)
         mergeServiceFiles()
         minimize()

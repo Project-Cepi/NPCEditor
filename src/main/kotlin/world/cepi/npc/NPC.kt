@@ -1,56 +1,66 @@
 package world.cepi.npc
 
 import kotlinx.serialization.Transient
-import net.minestom.server.command.CommandSender
-import net.minestom.server.command.builder.arguments.minecraft.ArgumentTime
-import net.minestom.server.command.builder.arguments.relative.ArgumentRelativeBlockPosition
 import net.minestom.server.entity.PlayerSkin
 import net.minestom.server.entity.fakeplayer.FakePlayer
-import net.minestom.server.event.entity.EntityDeathEvent
+import net.minestom.server.entity.fakeplayer.FakePlayerOption
 import net.minestom.server.instance.Instance
 import net.minestom.server.utils.Position
-import net.minestom.server.utils.time.UpdateOption
-import world.cepi.kstom.Manager
-import java.time.Duration
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 class NPC(
     val id: String,
     val instance: Instance,
-    vararg positions: Position,
-    val name: String = id,
-    val uuid: UUID = UUID.randomUUID(),
-    skin: PlayerSkin = PlayerSkin.fromUsername("MHF_Apple")!!
+    val mob: Mob
 ) {
-    var skin: PlayerSkin = skin
-        set(value) {
-            field = value
-            instances.forEach { it.fakePlayer.skin = value }
-        }
 
-    val positions: MutableList<Position> get() = instances.map { it.position }.toMutableList() // why mutable list?
+    companion object {
+        val npcNode = EventNode.type("npc", EventFilter.ENTITY)
+    }
 
-    @Transient
-    private val instances = mutableListOf<NPCInstance>()
-
-    fun generateInstanceFromNPC(
-        instance: Instance,
-        position: Position
-    ) {
-        instances.add(NPCInstance(name, uuid, instance, skin, position))
+    val listenerNode = EventNode.type("npc-$id", EventFilter.ENTITY) { event, entity ->
+        entity.getTag(Tag.String("npcID")) == id
     }
 
     init {
-        positions.forEach {
-            generateInstanceFromNPC(instance, it)
+
+        npcNode.addChild(listenerNode)
+
+        listenerNode.listenOnly<EntityDeathEvent> {
+            isAlive = false
+            onDeath()
+        }
+
+        listenerNode.listenOnly<RemoveEntityFromInstanceEvent> {
+            isAlive = false
+            onDeath()
         }
     }
 
-    val properties = mapOf(
-        "spawnPosition" to SpawnPosition() ,
-        "respawnDelay" to RespawnDelay()
-    )
+    var isAlive = false
+
+    fun attemptSpawn() {
+
+        if (isAlive) return
+
+        val creature = mob.generateMob() ?: return
+
+        creature.setInstance(instance, respawnPositions.random())
+
+        creature.setTag(Tag.String("npcID"), id)
+
+        isAlive = true
+    }
+
+    fun remove() {
+        // TODO
+    }
+
+    fun onDeath() {
+        Manager.scheduler.buildTask {
+            attemptSpawn()
+        }.delay(respawnInterval.toMillis(), TimeUnit.MILLISECOND).schedule()
+    }
 
     sealed class NPCProperty {
         abstract fun parse(sender: CommandSender, value: String)
@@ -111,4 +121,3 @@ class NPC(
         }
     }
 }
-
