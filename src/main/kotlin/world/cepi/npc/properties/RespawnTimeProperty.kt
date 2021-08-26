@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import net.minestom.server.MinecraftServer
 import net.minestom.server.command.CommandSender
+import net.minestom.server.command.builder.arguments.Argument
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentTime
 import world.cepi.npc.NPC
 import java.time.Duration
@@ -23,7 +24,7 @@ class RespawnTimeProperty(scope: CoroutineScope, npc: NPC, var duration: Duratio
     }
 
     override fun set(sender: CommandSender, value: String) {
-        duration = ArgumentTime("").parse(value)
+        duration = Argument.parse(ArgumentTime(value))
     }
 
     override fun get(): Duration = duration

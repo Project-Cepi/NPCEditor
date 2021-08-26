@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import net.minestom.server.command.CommandSender
+import net.minestom.server.command.builder.arguments.Argument
 import net.minestom.server.command.builder.arguments.relative.ArgumentRelativeBlockPosition
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.tag.Tag
@@ -26,8 +27,7 @@ class RespawnPositionProperty(scope: CoroutineScope, npc: NPC, val respawnPositi
     }
     override fun set(sender: CommandSender, value: String) {
         respawnPositions.clear()
-        respawnPositions += ArgumentRelativeBlockPosition("")
-            .parse(value)
+        respawnPositions += Argument.parse(ArgumentRelativeBlockPosition(value))
             .fromSender(sender)
             .asPosition()
     }
