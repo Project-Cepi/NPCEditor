@@ -1,22 +1,20 @@
 package world.cepi.npc.messaging
 
-import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.arguments.ArgumentType
 import world.cepi.kstom.adventure.asMini
-import world.cepi.kstom.command.addSyntax
+import world.cepi.kstom.command.kommand.Kommand
 
-object DialogueCommand : Command("dialogue") {
+object DialogueCommand : Kommand({
 
-    init {
-        val senderArgument = ArgumentType.String("sender")
+    val senderArgument = ArgumentType.String("sender")
 
-        val receiver = ArgumentType.String("receiver")
+    val receiver = ArgumentType.String("receiver")
 
-        val message = ArgumentType.StringArray("message").map { it.joinToString(" ").asMini() }
+    val message = ArgumentType.StringArray("message")
+        .map { it.joinToString(" ").asMini() }
 
-        addSyntax(senderArgument, receiver, message) {
-            sender.sendMessage(Dialogue.create(context[senderArgument], context[receiver], context[message]))
-        }
+    syntax(senderArgument, receiver, message) {
+        sender.sendMessage(Dialogue.create(context[senderArgument], context[receiver], context[message]))
     }
 
-}
+}, "dialogue")

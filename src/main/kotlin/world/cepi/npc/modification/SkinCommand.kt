@@ -1,46 +1,34 @@
 package world.cepi.npc.modification
 
-import net.minestom.server.command.builder.Command
-import net.minestom.server.entity.Player
 import net.minestom.server.entity.PlayerSkin
-import world.cepi.kstom.command.addSyntax
+import world.cepi.kstom.command.kommand.Kommand
 import java.util.*
 
-object SkinCommand : Command("skin") {
+object SkinCommand : Kommand({
 
-    init {
+    onlyPlayers
 
-        addSyntax(SkinArguments.selector, SkinArguments.userSkinInput) {
-            val player = sender as Player
+    syntax(SkinArguments.selector, SkinArguments.userSkinInput) {
+        val users = context[SkinArguments.userSkinInput].find(player)
 
-            val users = context[SkinArguments.userSkinInput].find(player)
+        if (users.isEmpty()) return@syntax
 
-            if (users.isEmpty()) return@addSyntax
-
-            player.skin = PlayerSkin.fromUuid(
-                context[SkinArguments.userSkinInput].find(player)[0].uuid.toString()
-            )
-        }
-
-        addSyntax(SkinArguments.uuidLiteral, SkinArguments.uuid) {
-            val player = sender as Player
-
-            player.skin = PlayerSkin.fromUuid(
-                context[SkinArguments.uuid].toString()
-            )
-        }
-
-        addSyntax(SkinArguments.usernameLiteral, SkinArguments.username) {
-            val player = sender as Player
-
-            player.skin = context[SkinArguments.username]
-        }
-
-        addSyntax(SkinArguments.reset) {
-            val player = sender as Player
-
-            player.skin = PlayerSkin.fromUsername(player.username)
-        }
+        player.skin = PlayerSkin.fromUuid(
+            context[SkinArguments.userSkinInput].find(player)[0].uuid.toString()
+        )
     }
 
-}
+    syntax(SkinArguments.uuidLiteral, SkinArguments.uuid) {
+        player.skin = PlayerSkin.fromUuid(
+            context[SkinArguments.uuid].toString()
+        )
+    }
+
+    syntax(SkinArguments.usernameLiteral, SkinArguments.username) {
+        player.skin = context[SkinArguments.username]
+    }
+
+    syntax(SkinArguments.reset) {
+        player.skin = PlayerSkin.fromUsername(player.username)
+    }
+}, "skin")

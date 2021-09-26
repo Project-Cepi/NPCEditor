@@ -4,12 +4,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.serialization.Transient
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.EntityCreature
-import net.minestom.server.entity.PlayerSkin
-import net.minestom.server.entity.fakeplayer.FakePlayer
-import net.minestom.server.entity.fakeplayer.FakePlayerOption
 import net.minestom.server.event.EventFilter
 import net.minestom.server.event.EventNode
 import net.minestom.server.event.entity.EntityDeathEvent
