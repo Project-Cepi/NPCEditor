@@ -1,9 +1,6 @@
 package world.cepi.npc
 
-import net.minestom.server.extensions.Extension;
-import world.cepi.kstom.command.register
-import world.cepi.kstom.command.unregister
-import world.cepi.npc.messaging.DialogueCommand
+import net.minestom.server.extensions.Extension
 import world.cepi.npc.modification.SkinCommand
 
 class NPCEditor : Extension() {
@@ -12,7 +9,6 @@ class NPCEditor : Extension() {
 
         NPCCommand.register()
         SkinCommand.register()
-        DialogueCommand.register()
 
         eventNode.addChild(NPC.npcNode)
 
@@ -23,7 +19,6 @@ class NPCEditor : Extension() {
 
         NPCCommand.unregister()
         SkinCommand.unregister()
-        DialogueCommand.unregister()
 
         logger.info("[NPCEditor] has been disabled!")
     }
