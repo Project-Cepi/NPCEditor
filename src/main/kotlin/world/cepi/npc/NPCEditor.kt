@@ -1,18 +1,22 @@
 package world.cepi.npc
 
 import net.minestom.server.extensions.Extension
+import world.cepi.kstom.util.log
+import world.cepi.kstom.util.node
 import world.cepi.npc.modification.SkinCommand
 
 class NPCEditor : Extension() {
 
-    override fun initialize() {
+    override fun initialize(): LoadStatus {
 
         NPCCommand.register()
         SkinCommand.register()
 
-        eventNode.addChild(NPC.npcNode)
+        node.addChild(NPC.npcNode)
 
-        logger.info("[NPCEditor] has been enabled!")
+        log.info("[NPCEditor] has been enabled!")
+
+        return LoadStatus.SUCCESS
     }
 
     override fun terminate() {
@@ -20,7 +24,7 @@ class NPCEditor : Extension() {
         NPCCommand.unregister()
         SkinCommand.unregister()
 
-        logger.info("[NPCEditor] has been disabled!")
+        log.info("[NPCEditor] has been disabled!")
     }
 
 }
