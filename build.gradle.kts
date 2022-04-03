@@ -41,11 +41,11 @@ dependencies {
     compileOnly("com.github.Minestom:Minestom:4ee5cbe424")
 
     // Get KStom
-    compileOnly("com.github.Project-Cepi:KStom:05b5e1f2a1")
+    compileOnly("com.github.Project-Cepi:KStom:aaadf29d0d")
 
     // import kotlinx serialization
-    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
 
     // add mobextension
     compileOnly("com.github.Project-Cepi:MobExtension:629803c1cd")
