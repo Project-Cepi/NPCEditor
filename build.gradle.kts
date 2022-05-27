@@ -38,14 +38,14 @@ dependencies {
     compileOnly(kotlin("reflect"))
 
     // Compile Minestom into project
-    compileOnly("com.github.Minestom:Minestom:4ee5cbe424")
+    compileOnly("com.github.Minestom:Minestom:7867313290")
 
     // Get KStom
-    compileOnly("com.github.Project-Cepi:KStom:aaadf29d0d")
+    compileOnly("com.github.Project-Cepi:KStom:82f7000079")
 
     // import kotlinx serialization
-    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
 
     // add mobextension
     compileOnly("com.github.Project-Cepi:MobExtension:629803c1cd")

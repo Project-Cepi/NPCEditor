@@ -46,8 +46,8 @@ object NPCCommand : Kommand({
 
     val remainingString = ArgumentType.StringArray("value")
 
-    syntax(create, newID).onlyPlayers {
-        val mob = player.mobEgg ?: return@onlyPlayers
+    syntax(create, newID) {
+        val mob = player.mobEgg ?: return@syntax
 
         NPCManager.add(NPC(
             context.get(newID),
@@ -55,7 +55,7 @@ object NPCCommand : Kommand({
             mob = mob,
             instance = player.instance!!
         ).also { it.attemptSpawn() })
-    }
+    }.onlyPlayers()
 
     syntax(delete, existingID) {
         NPCManager.remove(existingID.id)

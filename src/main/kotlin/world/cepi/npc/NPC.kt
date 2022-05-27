@@ -39,7 +39,7 @@ class NPC(
     }
 
     @Transient
-    val listenerNode = EventNode.type("npc-$id", EventFilter.ENTITY) { event, entity ->
+    val listenerNode = EventNode.type("npc-$id", EventFilter.ENTITY) { _, entity ->
         entity.getTag(Tag.String("npcID")) == id
     }
 

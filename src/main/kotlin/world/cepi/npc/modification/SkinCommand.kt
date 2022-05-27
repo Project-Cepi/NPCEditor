@@ -6,7 +6,7 @@ import java.util.*
 
 object SkinCommand : Kommand({
 
-    onlyPlayers
+    onlyPlayers()
 
     syntax(SkinArguments.selector, SkinArguments.userSkinInput) {
         val users = context[SkinArguments.userSkinInput].find(player)
