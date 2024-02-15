@@ -45,7 +45,7 @@ dependencies {
 
     // import kotlinx serialization
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
 
     // add mobextension
     compileOnly("com.github.Project-Cepi:MobExtension:629803c1cd")
